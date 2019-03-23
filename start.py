@@ -4,7 +4,7 @@ import math
 # Very basic window.
 layout = [
     [sg.Canvas(size=(640, 480), background_color='gray', key='canvas')],
-    [sg.T('This is display area.')]
+    [sg.T('遊戲說明：\n方向鍵按下去以後，會滑到底才可以決定下一個行進方向。\n遊戲目標是要移動到金色區域（出口）。')]
 ]
 
 # Game Board
@@ -22,7 +22,7 @@ board = """\
 #...........#......#
 ##......#..........#
 #..........#.......#
-#..........#...#...#
+#..........#.......#
 ####################
 """.splitlines()
 
