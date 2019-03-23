@@ -21,6 +21,9 @@ while True:
 
     if event is None:
         break
+    
+    if event != sg.TIMEOUT_KEY:
+        print(ord(event[0]))
 
     try:
         game.run_one_iteration(event, value)

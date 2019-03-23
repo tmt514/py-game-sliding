@@ -1,5 +1,7 @@
 from .ball import Ball
 from .item import Coin
+import random
+import ipdb
 
 class Stage:
 
@@ -29,6 +31,19 @@ class Stage:
 #..........#.......#
 ####################
 """.splitlines()
+
+
+        self.ui.reset_canvas()
+
+        self.board = [[random.choice(['.', '#']) for _ in range(20)] for _ in range(15)]
+        for i in range(15):
+            self.board[i][0] = '#'
+            self.board[i][19] = '#'
+        for j in range(20):
+            self.board[0][j] = '#'
+            self.board[14][j] = '#'
+        self.board[2][2] = 'S'
+        
 
         self.board_ui = [[None] * len(self.board[0]) for x in self.board]
         self.ball = Ball(self, self.ui, self.get_initial_ball_position())

@@ -21,3 +21,6 @@ class UIController:
 
     def update_player_info(self, info):
         self.window.FindElement('score').Update('Score: {}'.format(info['score']))
+        
+    def reset_canvas(self):
+        self.canvas.delete("all")

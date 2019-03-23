@@ -2,10 +2,10 @@ from .stage import Stage
 import PySimpleGUI as sg 
 
 
-KEYS_UP = ["Up:111", "KP_Up:80"]
-KEYS_DOWN = ["Down:116", "KP_Down:88"]
-KEYS_LEFT = ["Left:113", "KP_Left:83"]
-KEYS_RIGHT = ["Right:114", "KP_Right:85"]
+KEYS_UP = ["w", "Up:111", "KP_Up:80"]
+KEYS_DOWN = ["s", "Down:116", "KP_Down:88"]
+KEYS_LEFT = ["a", "Left:113", "KP_Left:83"]
+KEYS_RIGHT = ["d", "Right:114", "KP_Right:85"]
 
 MOVE_UP = (-1, 0)
 MOVE_DOWN = (1, 0)
@@ -26,7 +26,6 @@ class Game:
 
     def setup_stage(self):
         self.stage.load()
-        self.ball = self.stage.ball
 
     def run_one_iteration(self, event, value):
 
@@ -35,15 +34,17 @@ class Game:
 
         # Updates ball's moving intent.
         if event in KEYS_UP:
-            self.ball.update_moving_intent(MOVE_UP)
+            self.stage.ball.update_moving_intent(MOVE_UP)
         elif event in KEYS_DOWN:
-            self.ball.update_moving_intent(MOVE_DOWN)
+            self.stage.ball.update_moving_intent(MOVE_DOWN)
         elif event in KEYS_LEFT:
-            self.ball.update_moving_intent(MOVE_LEFT)
+            self.stage.ball.update_moving_intent(MOVE_LEFT)
         elif event in KEYS_RIGHT:
-            self.ball.update_moving_intent(MOVE_RIGHT)
+            self.stage.ball.update_moving_intent(MOVE_RIGHT)
+        elif event == 'r':
+            self.stage.load()
         else:
-            self.ball.update_moving_intent(None)
+            self.stage.ball.update_moving_intent(None)
 
         # Actually moves the ball, and let the stage handle the event.
         self.stage.move_ball(self.player_info)
