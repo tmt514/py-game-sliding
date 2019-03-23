@@ -1,4 +1,5 @@
 from .ball import Ball
+from .item import Coin
 
 class Stage:
 
@@ -13,25 +14,32 @@ class Stage:
         """
         self.board = """\
 ####################
-#.#................#
+#$#................#
 #..S.............###
-#..................#
+#............$.....#
 #..................#
 #..#...............#
-##.......#......##.#
+##$......#......##.#
 ##...............#.#
-##................##
+##....$...........##
 #...#...........E.##
 #...........#......#
 ##......#..........#
-#..........#.......#
+#$.........#.......#
 #..........#.......#
 ####################
 """.splitlines()
 
         self.board_ui = [[None] * len(self.board[0]) for x in self.board]
         self.ball = Ball(self, self.ui, self.get_initial_ball_position())
+        self.items = [[None] * len(self.board[0]) for x in self.board]
         self.ball_ui = None
+
+        for i in range(len(self.board)):
+            for j in range(len(self.board[0])):
+                if self.board[i][j] == '$':
+                    self.items[i][j] = Coin((i, j), self, self.ui)
+        
 
         def create_board(self, canvas):
             for i in range(len(self.board)):
@@ -45,6 +53,7 @@ class Stage:
                         fill = None
                     bbox = (1+j*32, 1+i*32, 1+j*32+32, 1+i*32+32)
                     self.board_ui[i][j] = canvas.create_rectangle(*bbox, width=width, fill=fill)
+
 
         def create_ball(self, canvas):
             i, j = self.ball.position
@@ -69,7 +78,7 @@ class Stage:
     def check_win(self):
         return self.board[self.ball.position[0]][self.ball.position[1]] == 'E'
 
-    def move_ball(self):
+    def move_ball(self, player_info):
         # Simulate one movement to the ball.
         if self.ball.is_moving == True:
             self.ball.moving_progress += 1
@@ -94,6 +103,14 @@ class Stage:
                     1+self.ball.position[1]*32+32-4,
                     1+self.ball.position[0]*32+32-4)
         
+        # Check if the ball hits something.
+        if self.ball.moving_progress == 0:
+            x, y = self.ball.position
+            if self.items[x][y] != None:
+                needs_destroy = self.items[x][y].pass_through(player_info)
+                if needs_destroy == True:
+                    self.items[x][y] = None
+
         def update_ball_coords(self, canvas):
             canvas.coords(self.ball_ui, *bbox)
         self.ui.add_update(self, update_ball_coords)

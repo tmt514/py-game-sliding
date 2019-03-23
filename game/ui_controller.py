@@ -1,6 +1,7 @@
 class UIController:
 
-    def __init__(self, canvas):
+    def __init__(self, window, canvas):
+        self.window = window
         self.canvas = canvas
         self.update_queue = []
 
@@ -17,3 +18,6 @@ class UIController:
             f(obj, self.canvas)
 
         self.update_queue = []
+
+    def update_player_info(self, info):
+        self.window.FindElement('score').Update('Score: {}'.format(info['score']))

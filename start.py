@@ -5,13 +5,14 @@ import math
 # Very basic window.
 layout = [
     [sg.Canvas(size=(640, 480), background_color='gray', key='canvas')],
-    [sg.T('遊戲說明：\n方向鍵按下去以後，會滑到底才可以決定下一個行進方向。\n遊戲目標是要移動到金色區域（出口）。')]
+    [sg.T('遊戲說明：\n方向鍵按下去以後，會滑到底才可以決定下一個行進方向。\n遊戲目標是要移動到金色區域（出口）。'),
+        sg.T('Score: 0', key='score')]
 ]
 
 window = sg.Window('Canvas test', return_keyboard_events=True).Layout(layout).Finalize()
 canvas = window.FindElement('canvas').TKCanvas
 
-ui = UIController(canvas)
+ui = UIController(window, canvas)
 game = Game("defualt", ui)
 game.setup_stage()
 

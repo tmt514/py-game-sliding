@@ -19,13 +19,17 @@ class Game:
         self.stage = Stage(stage_id, ui)
         self.ui = ui
         self.game_state = 'running'
+        self.player_info = {
+            'needs_update': False,
+            'score': 0
+        }
 
     def setup_stage(self):
         self.stage.load()
         self.ball = self.stage.ball
 
     def run_one_iteration(self, event, value):
-        
+
         if event != sg.TIMEOUT_KEY:
             print(event, value)
 
@@ -41,8 +45,12 @@ class Game:
         else:
             self.ball.update_moving_intent(None)
 
-        # Actually moves the ball.
-        self.stage.move_ball()
+        # Actually moves the ball, and let the stage handle the event.
+        self.stage.move_ball(self.player_info)
+
+        if self.player_info['needs_update'] == True:
+            self.player_info['needs_update'] = False
+            self.ui.update_player_info(self.player_info)
 
         if self.stage.check_win() == True:
             sg.Popup('Congrats! You win!')
