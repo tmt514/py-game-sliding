@@ -1,7 +1,9 @@
 from .ball import Ball
-from .item import Coin
+from .item import Coin, Trap
+from .map_generator import generator
 import random
 import ipdb
+
 
 class Stage:
 
@@ -33,18 +35,11 @@ class Stage:
 """.splitlines()
 
 
+        
         self.ui.reset_canvas()
 
-        self.board = [[random.choice(['.', '#']) for _ in range(20)] for _ in range(15)]
-        for i in range(15):
-            self.board[i][0] = '#'
-            self.board[i][19] = '#'
-        for j in range(20):
-            self.board[0][j] = '#'
-            self.board[14][j] = '#'
-        self.board[2][2] = 'S'
+        self.board = generator.generate()
         
-
         self.board_ui = [[None] * len(self.board[0]) for x in self.board]
         self.ball = Ball(self, self.ui, self.get_initial_ball_position())
         self.items = [[None] * len(self.board[0]) for x in self.board]
@@ -54,6 +49,8 @@ class Stage:
             for j in range(len(self.board[0])):
                 if self.board[i][j] == '$':
                     self.items[i][j] = Coin((i, j), self, self.ui)
+                elif self.board[i][j] == 't': # Trap.
+                    self.items[i][j] = Trap((i, j), self, self.ui)
         
 
         def create_board(self, canvas):

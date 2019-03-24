@@ -7,6 +7,8 @@ KEYS_DOWN = ["s", "Down:116", "KP_Down:88"]
 KEYS_LEFT = ["a", "Left:113", "KP_Left:83"]
 KEYS_RIGHT = ["d", "Right:114", "KP_Right:85"]
 
+ALL_MOVE_KEYS = KEYS_UP + KEYS_DOWN + KEYS_LEFT + KEYS_RIGHT
+
 MOVE_UP = (-1, 0)
 MOVE_DOWN = (1, 0)
 MOVE_LEFT = (0, -1)
@@ -21,7 +23,8 @@ class Game:
         self.game_state = 'running'
         self.player_info = {
             'needs_update': False,
-            'score': 0
+            'score': 0,
+            'total_keypress': 0,
         }
 
     def setup_stage(self):
@@ -45,6 +48,11 @@ class Game:
             self.stage.load()
         else:
             self.stage.ball.update_moving_intent(None)
+            
+            
+        if event in ALL_MOVE_KEYS:
+            self.player_info['total_keypress'] += 1
+            self.player_info['needs_update'] = True
 
         # Actually moves the ball, and let the stage handle the event.
         self.stage.move_ball(self.player_info)
