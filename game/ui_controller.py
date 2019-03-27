@@ -20,7 +20,12 @@ class UIController:
         self.update_queue = []
 
     def update_player_info(self, info):
-        self.window.FindElement('score').Update('Score: {}\nMoves: {}'.format(info['score'], info['total_keypress']))
-        
+        self.window.FindElement('score').Update('Score: {}\nMoves: {}'.format(
+            info.get('score', 0) + info.get('current_stage_score'), info['total_keypress']))
+
+    def update_stage_info(self, level_data):
+        self.window.FindElement('stage_name').Update('第 {} 關： {}'.format(
+            level_data.get('level', '?'), level_data.get('title', '')))
+
     def reset_canvas(self):
         self.canvas.delete("all")

@@ -16,13 +16,15 @@ class Trap(Item):
         
         def add_trap(self, canvas):
             bbox = (1+32*self.position[1]+8, 1+32*self.position[0]+8,
-                    1+32*self.position[1]+16, 1+32*self.position[0]+16)
-            self.ui = canvas.create_rectangle(bbox, fill='black')
+                    1+32*self.position[1]+24, 1+32*self.position[0]+24)
+            pos = (1+32*self.position[1]+16, 1+32*self.position[0]+16)
+            self.ui = canvas.create_text(*pos, text='x', font=('Times', 24, 'bold'), fill='red')
+            # self.ui = canvas.create_rectangle(bbox, fill='black')
 
         ui_controller.use_canvas(self, add_trap)
         
     def pass_through(self, player_info):
-        player_info['score'] -= 1
+        player_info['current_stage_score'] -= 1
         player_info['needs_update'] = True
         return False
 
@@ -40,7 +42,7 @@ class Coin(Item):
 
     def pass_through(self, player_info):
         """ Returns true if this object needs destroy. """
-        player_info['score'] += 5
+        player_info['current_stage_score'] += 5
         player_info['needs_update'] = True
 
         def destroy_ui(self, canvas):

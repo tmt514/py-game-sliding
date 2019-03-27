@@ -2,44 +2,21 @@ from .ball import Ball
 from .item import Coin, Trap
 from .map_generator import generator
 import random
-import ipdb
 
 
 class Stage:
 
-    def __init__(self, stage_id, ui):
-        self.id = stage_id
+    def __init__(self, board, ui):
         self.ui = ui
-        self.board = None
+        self.board = board
         self.board_ui = None
 
     def load(self):
         """Loads a stage correctly depending on the stage id.
         """
-        self.board = """\
-####################
-#$#................#
-#..S.............###
-#............$.....#
-#..................#
-#..#...............#
-##$......#......##.#
-##...............#.#
-##....$...........##
-#...#...........E.##
-#...........#......#
-##......#..........#
-#$.........#.......#
-#..........#.......#
-####################
-""".splitlines()
-
-
-        
         self.ui.reset_canvas()
 
-        self.board = generator.generate()
-        
+        # self.board = generator.generate()
         self.board_ui = [[None] * len(self.board[0]) for x in self.board]
         self.ball = Ball(self, self.ui, self.get_initial_ball_position())
         self.items = [[None] * len(self.board[0]) for x in self.board]
@@ -49,9 +26,8 @@ class Stage:
             for j in range(len(self.board[0])):
                 if self.board[i][j] == '$':
                     self.items[i][j] = Coin((i, j), self, self.ui)
-                elif self.board[i][j] == 't': # Trap.
+                elif self.board[i][j] == 't':  # Trap.
                     self.items[i][j] = Trap((i, j), self, self.ui)
-        
 
         def create_board(self, canvas):
             for i in range(len(self.board)):
@@ -64,14 +40,14 @@ class Stage:
                     else:
                         fill = None
                     bbox = (1+j*32, 1+i*32, 1+j*32+32, 1+i*32+32)
-                    self.board_ui[i][j] = canvas.create_rectangle(*bbox, width=width, fill=fill)
-
+                    self.board_ui[i][j] = canvas.create_rectangle(
+                        *bbox, width=width, fill=fill)
 
         def create_ball(self, canvas):
             i, j = self.ball.position
             bbox = (5+j*32, 5+i*32, 1+j*32+32-4, 1+i*32+32-4)
             self.ball_ui = canvas.create_oval(*bbox, fill='white')
-        
+
         self.ui.use_canvas(self, create_board)
         self.ui.use_canvas(self, create_ball)
 
@@ -99,22 +75,25 @@ class Stage:
                 if self.can_move(self.ball.position, self.ball.moving_direction) == False:
                     self.ball.is_moving = False
                     self.ball.moving_direction = None
-        
+
         if self.ball.is_moving == True:
             bbox = (5+self.ball.position[1]*32
-                        +8*self.ball.moving_progress*self.ball.moving_direction[1],
+                    + 8*self.ball.moving_progress *
+                    self.ball.moving_direction[1],
                     5+self.ball.position[0]*32
-                        +8*self.ball.moving_progress*self.ball.moving_direction[0],
+                    + 8*self.ball.moving_progress *
+                    self.ball.moving_direction[0],
                     1+self.ball.position[1]*32+32-4
-                        +8*self.ball.moving_progress*self.ball.moving_direction[1],
+                    + 8*self.ball.moving_progress *
+                    self.ball.moving_direction[1],
                     1+self.ball.position[0]*32+32-4
-                        +8*self.ball.moving_progress*self.ball.moving_direction[0])
+                    + 8*self.ball.moving_progress*self.ball.moving_direction[0])
         else:
             bbox = (5+self.ball.position[1]*32,
                     5+self.ball.position[0]*32,
                     1+self.ball.position[1]*32+32-4,
                     1+self.ball.position[0]*32+32-4)
-        
+
         # Check if the ball hits something.
         if self.ball.moving_progress == 0:
             x, y = self.ball.position
