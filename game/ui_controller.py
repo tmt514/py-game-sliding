@@ -1,9 +1,43 @@
+from tkinter import *
+
 class UIController:
 
-    def __init__(self, window, canvas):
-        self.window = window
+    def __init__(self):
+        self.root = Tk()
+
+        top_frame = Frame(self.root)
+        top_frame.pack()
+
+        stage_name = Label(top_frame, text='第 000 關', font=("Helvetica", 16))
+        stage_name.pack(side=LEFT)
+
+        mid_frame = Frame(self.root)
+        mid_frame.pack()
+
+        canvas = Canvas(mid_frame, height=480, width=640, bg='gray')
+        canvas.pack()
+
+        bottom_frame = Frame(self.root)
+        bottom_frame.pack(fill=X)
+
+        info_message = Label(bottom_frame,
+            justify=LEFT,
+            text='遊戲說明：\n方向鍵按下去以後，會滑到底才可以決定下一個行進方向。\n遊戲目標是要移動到金色區域（出口）。')
+        info_message.pack(side=LEFT)
+
+        score = Label(bottom_frame,
+            text='Score: 0\nMoves: 0')
+        score.pack(side=RIGHT)
+        
+        self.stage_name = stage_name
         self.canvas = canvas
+        self.score = score
         self.update_queue = []
+
+
+    def mainloop(self):
+        self.root.mainloop()
+
 
     def use_canvas(self, obj, f):
         """E.g. add Item to canvas."""
@@ -20,11 +54,11 @@ class UIController:
         self.update_queue = []
 
     def update_player_info(self, info):
-        self.window.FindElement('score').Update('Score: {}\nMoves: {}'.format(
+        self.score.config(text='Score: {}\nMoves: {}'.format(
             info.get('score', 0) + info.get('current_stage_score'), info['total_keypress']))
 
     def update_stage_info(self, level_data):
-        self.window.FindElement('stage_name').Update('第 {} 關： {}'.format(
+        self.stage_name.config(text='第 {} 關： {}'.format(
             level_data.get('level', '?'), level_data.get('title', '')))
 
     def reset_canvas(self):

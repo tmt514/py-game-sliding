@@ -1,39 +1,18 @@
 from game import Game, UIController
 import PySimpleGUI as sg
+from tkinter import *
 import math
 
-# Very basic window.
-layout = [
-    [sg.T('第 000 關', auto_size_text=False, key='stage_name')],
-    [sg.Canvas(size=(640, 480), background_color='gray', key='canvas')],
-    [sg.T('遊戲說明：\n方向鍵按下去以後，會滑到底才可以決定下一個行進方向。\n遊戲目標是要移動到金色區域（出口）。'),
-        sg.T('Score: 0\nMoves: 0', auto_size_text=True, key='score')]
-]
 
-window = sg.Window('Canvas test', return_keyboard_events=True).Layout(layout).Finalize()
-canvas = window.FindElement('canvas').TKCanvas
-
-ui = UIController(window, canvas)
+ui = UIController()
 game = Game("default", ui)
 game.setup_stage()
 
-while True:
-    event, value = window.Read(timeout=15)
+def run_one_iteration():
+    global game, ui
+    game.run_one_iteration()
+    ui.update_all()
+    ui.root.after(15, run_one_iteration)
 
-    if event is None:
-        break
-    
-    if event != sg.TIMEOUT_KEY:
-        print(ord(event[0]))
-
-    try:
-        game.run_one_iteration(event, value)
-        ui.update_all()
-    except Exception as e:
-        if str(e) == "Done!":
-            break
-        else:
-            raise e
-
-
-    
+ui.root.after(0, run_one_iteration)
+ui.mainloop()

@@ -4,10 +4,10 @@ import yaml
 import os
 
 
-KEYS_UP = ["w", "Up:111", "KP_Up:80"]
-KEYS_DOWN = ["s", "Down:116", "KP_Down:88"]
-KEYS_LEFT = ["a", "Left:113", "KP_Left:83"]
-KEYS_RIGHT = ["d", "Right:114", "KP_Right:85"]
+KEYS_UP = ["w", "Up:111", "KP_Up:80", "Up", "KP_Up"]
+KEYS_DOWN = ["s", "Down:116", "KP_Down:88", "Down", "KP_Down"]
+KEYS_LEFT = ["a", "Left:113", "KP_Left:83", "Left", "KP_Left"]
+KEYS_RIGHT = ["d", "Right:114", "KP_Right:85", "Right", "KP_Right"]
 
 ALL_MOVE_KEYS = KEYS_UP + KEYS_DOWN + KEYS_LEFT + KEYS_RIGHT
 
@@ -36,6 +36,11 @@ class Game:
             'total_keypress': 0,
         }
 
+        self.ui.root.bind('<KeyPress>', self.on_key_down)
+
+    def __del__(self):
+        self.ui.root.unbind('<KeyPress>', self.on_key_down)
+
     def setup_stage(self):
         level_data = self.stageset['stages'][self.level]
         board = level_data['board'].splitlines()
@@ -44,39 +49,46 @@ class Game:
         self.stage = Stage(board, self.ui)
         self.stage.load()
 
-    def run_one_iteration(self, event, value):
+    def on_key_down(self, event):
+        # Find which key the player has pressed.
+        keysym = event.keysym
+        if event.keycode == 0:
+            keysym = event.char
 
-        if event != sg.TIMEOUT_KEY:
-            print(event, value)
+        print(event, keysym)
 
         # Updates ball's moving intent.
-        if event in KEYS_UP:
+        if keysym in KEYS_UP:
             self.stage.ball.update_moving_intent(MOVE_UP)
-        elif event in KEYS_DOWN:
+        elif keysym in KEYS_DOWN:
             self.stage.ball.update_moving_intent(MOVE_DOWN)
-        elif event in KEYS_LEFT:
+        elif keysym in KEYS_LEFT:
             self.stage.ball.update_moving_intent(MOVE_LEFT)
-        elif event in KEYS_RIGHT:
+        elif keysym in KEYS_RIGHT:
             self.stage.ball.update_moving_intent(MOVE_RIGHT)
-        elif event == 'r':
+        elif keysym == 'r':
             self.player_info['current_stage_score'] = 0
             self.player_info['needs_update'] = True
             self.setup_stage()
             return
-        elif event == '>':
+        elif keysym == '>':
             self.level = min(self.level + 1, len(self.stageset['stages']) - 1)
             self.setup_stage()
-        elif event == '<':
+        elif keysym == '<':
             self.level = max(self.level - 1, len(self.stageset['stages']) - 1)
             self.setup_stage()
         else:
             self.stage.ball.update_moving_intent(None)
 
-        if event in ALL_MOVE_KEYS:
+        if keysym in ALL_MOVE_KEYS:
             self.player_info['total_keypress'] += 1
             self.player_info['needs_update'] = True
 
+
+    def run_one_iteration(self):
+
         # Actually moves the ball, and let the stage handle the event.
+        self.stage.ball.update_moving_intent(None)
         self.stage.move_ball(self.player_info)
 
         if self.player_info['needs_update'] == True:
