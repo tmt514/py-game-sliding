@@ -1,5 +1,4 @@
 from game import Game, UIController
-import PySimpleGUI as sg
 from tkinter import *
 import math
 
