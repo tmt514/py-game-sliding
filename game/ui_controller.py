@@ -1,9 +1,18 @@
 from tkinter import *
+from os import system
+from platform import system as platform
 
 class UIController:
 
     def __init__(self):
         self.root = Tk()
+        self.root.lift()
+        self.root.wm_attributes("-topmost", True)
+        self.root.after_idle(self.root.call, 'wm', 'attributes', '.', "-topmost", False)
+        self.root.after(1, lambda: self.root.focus_force())
+        if platform() == 'Darwin':  # How Mac OS X is identified by Python
+            system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
+
 
         top_frame = Frame(self.root)
         top_frame.pack()

@@ -104,4 +104,4 @@ class Game:
             else:
                 sg.Popup('Congrats! You win!\n按鍵次數：{} 次\n你的得分是：{} 分'.format(
                     self.player_info.get('total_keypress', '?'), self.player_info.get('score', '?')))
-                raise Exception('Done!')
+                self.ui.root.quit()
